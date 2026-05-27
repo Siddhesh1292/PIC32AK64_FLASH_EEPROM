@@ -15,6 +15,12 @@ volatile static uint8_t codekey1 = 1, codekey0 = 0;
 #define CODEKEY1 13
 #define CODEKEY0 7
 
+#define PIC32AK_UDID1_ADDR 0x7F2BE0UL
+#define PIC32AK_UDID2_ADDR 0x7F2BE4UL
+
+#define PIC32AK_UDID1 (*(volatile uint32_t *)PIC32AK_UDID1_ADDR)
+#define PIC32AK_UDID2 (*(volatile uint32_t *)PIC32AK_UDID2_ADDR)
+
 
 int code_authentication(void)
 {
@@ -55,8 +61,8 @@ void DEVSN_send(void)
 {
     uint32_t mydevsnL;
     uint32_t mydevsnH;
-    mydevsnL    = (uint32_t)DEVSN0;
-    mydevsnH    = (uint32_t)DEVSN1;
+    mydevsnL    = PIC32AK_UDID1;
+    mydevsnH    = PIC32AK_UDID2;
  __builtin_memcpy((uint8_t *)(devsn_string + 1), &mydevsnH, 4);
  __builtin_memcpy((uint8_t *)(devsn_string + 5), &mydevsnL, 4);
  send_data_uart(devsn_string, 10);

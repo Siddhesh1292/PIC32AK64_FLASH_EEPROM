@@ -1,6 +1,5 @@
 #include "flash_eeprom.h"
 #include "definitions.h"
-#include "sys/kmem"
 #include <string.h>
 
 typedef struct {
@@ -9,6 +8,7 @@ typedef struct {
     uint32_t crc;
     uint32_t length;
     uint32_t reserved;
+    uint32_t padding[3];
 } EEPROM_HEADER;
 
 static const uint32_t pages[EEPROM_NUM_PAGES] = {
@@ -51,8 +51,20 @@ static bool erase_page(uint32_t addr) {
     return flash_wait_complete();
 }
 
-static bool write_word(uint32_t addr, uint32_t data) {
-    NVM_WordWrite(data, addr);
+static bool write_quadword(uint32_t addr, const uint8_t *data, uint32_t length) {
+    uint32_t quadword[4] = {
+        0xFFFFFFFF,
+        0xFFFFFFFF,
+        0xFFFFFFFF,
+        0xFFFFFFFF
+    };
+
+    if (length > sizeof (quadword)) {
+        return false;
+    }
+
+    memcpy(quadword, data, length);
+    NVM_QuadWordWrite(quadword, addr);
 
     return flash_wait_complete();
 }
@@ -60,7 +72,7 @@ static bool write_word(uint32_t addr, uint32_t data) {
 static bool page_is_valid(uint32_t addr, EEPROM_HEADER *header) {
     memcpy(
             header,
-            (void*) KVA0_TO_KVA1(addr),
+            (void*) addr,
             sizeof (EEPROM_HEADER)
             );
 
@@ -81,7 +93,7 @@ static bool page_is_valid(uint32_t addr, EEPROM_HEADER *header) {
 
     memcpy(
             tempBuffer,
-            (void*) KVA0_TO_KVA1(addr + sizeof (EEPROM_HEADER)),
+            (void*) (addr + sizeof (EEPROM_HEADER)),
             header->length
             );
 
@@ -173,30 +185,26 @@ FLASH_EEPROM_STATUS FLASH_EEPROM_Write_Page(uint8_t *data, uint32_t length) {
     uint32_t writeAddr = nextPage + sizeof (EEPROM_HEADER);
 
     /* Write DATA first */
-    for (uint32_t i = 0; i < length; i += 4) {
-        uint32_t word = 0xFFFFFFFF;
+    for (uint32_t i = 0; i < length; i += 16) {
+        uint32_t chunkLength = ((length - i) >= 16U) ? 16U : (length - i);
 
-        memcpy(&word,
-                &data[i],
-                (length - i) >= 4 ? 4 : (length - i));
-
-        if (!write_word(writeAddr + i, word)) {
+        if (!write_quadword(writeAddr + i, &data[i], chunkLength)) {
             return FLASH_EEPROM_ERROR;
         }
     }
 
     /* Write HEADER last -> commit page */
-    uint32_t *hdrPtr = (uint32_t*) & newHdr;
+    newHdr.padding[0] = 0xFFFFFFFF;
+    newHdr.padding[1] = 0xFFFFFFFF;
+    newHdr.padding[2] = 0xFFFFFFFF;
 
     /* Write sequence, crc, length, reserved first */
-    for (int i = 1; i < sizeof (EEPROM_HEADER) / 4; i++) {
-        if (!write_word(nextPage + (i * 4), hdrPtr[i])) {
-            return FLASH_EEPROM_ERROR;
-        }
+    if (!write_quadword(nextPage + 16U, ((uint8_t *)&newHdr) + 16U, 16U)) {
+        return FLASH_EEPROM_ERROR;
     }
 
     /* Write marker LAST -> final commit */
-    if (!write_word(nextPage, EEPROM_VALID_MARKER)) {
+    if (!write_quadword(nextPage, (uint8_t *)&newHdr, 16U)) {
         return FLASH_EEPROM_ERROR;
     }
 

@@ -26,10 +26,10 @@ void recieve_command_uart(void)
     
     if(command_byte_num == 0) memset(&uart_command[0], 0x00, 20);                       //clear the command array
     
-    if(U1STAbits.URXDA)
+    if(UART1_ReceiverIsReady())
     {
         Nop();
-        recieved_byte = U1RXREG;
+        recieved_byte = (uint8_t)UART1_ReadByte();
         Nop();
         
         if((command_byte_num < 20) & (command_byte_num >= 0))
@@ -155,9 +155,9 @@ void send_byte_uart(void)
 {
     if(num_of_bytes > 0)                       
     {
-        if(!(U1STA & _U1STA_UTXBF_MASK))
+        if(UART1_TransmitterIsReady())
         {
-            U1TXREG = *byte_adr;
+            UART1_WriteByte(*byte_adr);
             byte_adr = byte_adr + 1;
             num_of_bytes = num_of_bytes - 1;            
         }
