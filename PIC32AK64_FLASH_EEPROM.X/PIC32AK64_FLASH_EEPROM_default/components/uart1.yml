@@ -1,0 +1,117 @@
+configVersion: 1.0.0
+componentName: uart1
+coreVersion: 5.8.4
+device: PIC32AK6416GC41064
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: uart1
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: csp
+  type: package
+  version: v3.22.6
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition:
+    attributes:
+      id: __ROOTVIEW
+    children:
+    - children:
+      - attributes:
+          id: uart1
+          x: '253'
+          y: '100'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    U_CON__BRGS:
+      attributes:
+        id: U_CON__BRGS
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: '0'
+          type: Dynamic
+        type: Values
+      type: String
+    U_CON__CLKMOD:
+      attributes:
+        id: U_CON__CLKMOD
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: '1'
+          type: Dynamic
+        type: Values
+      type: String
+    baudRateVal:
+      attributes:
+        id: baudRateVal
+      children:
+      - children:
+        - attributes:
+            value: '9600'
+          type: User
+        type: Values
+      type: Integer
+    brgRegValue:
+      attributes:
+        id: brgRegValue
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: '0x28b1'
+          type: Dynamic
+        type: Values
+      type: String
+    calcBaudRateVal:
+      attributes:
+        id: calcBaudRateVal
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: '9599.693'
+          type: Dynamic
+        type: Values
+      type: String
+    intEnable:
+      attributes:
+        id: intEnable
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    operatingMode:
+      attributes:
+        id: operatingMode
+      children:
+      - children:
+        - attributes:
+            value: '0'
+          type: User
+        type: Values
+      type: KeyValueSet
+    ringBufferModeEnable:
+      attributes:
+        id: ringBufferModeEnable
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+  userData: {}

@@ -1,0 +1,98 @@
+configVersion: 1.0.0
+componentName: timer1
+coreVersion: 5.8.4
+device: PIC32AK6416GC41064
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: timer1
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: csp
+  type: package
+  version: v3.22.6
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition:
+    attributes:
+      id: __ROOTVIEW
+    children:
+    - children:
+      - attributes:
+          id: timer1
+          x: '83'
+          y: '99'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    PERIOD_REG_COMMENT:
+      attributes:
+        id: PERIOD_REG_COMMENT
+      children:
+      - children:
+        - attributes:
+            id: timer1
+            value: '18299'
+          type: Dynamic
+        type: Values
+      type: Long
+    TIMER_PERIOD:
+      attributes:
+        id: TIMER_PERIOD
+      children:
+      - children:
+        - attributes:
+            id: timer1
+            value: '18299'
+          type: Dynamic
+        type: Values
+      type: Hex
+    TIMER_PERIOD_NS:
+      attributes:
+        id: TIMER_PERIOD_NS
+      children:
+      - children:
+        - attributes:
+            id: timer1
+            value: '183000'
+          type: Dynamic
+        type: Values
+      type: Long
+    TIMER_UNIT:
+      attributes:
+        id: TIMER_UNIT
+      children:
+      - children:
+        - attributes:
+            value: microsecond
+          type: User
+        type: Values
+      type: Combo
+    TIME_PERIOD_MS:
+      attributes:
+        id: TIME_PERIOD_MS
+      children:
+      - children:
+        - attributes:
+            id: label
+          children:
+          - type: Value
+            value: Time in microsecond
+          type: String
+        - attributes:
+            id: max
+          children:
+          - type: Value
+            value: '4.2949672E7'
+          type: Float
+        type: Attributes
+      - children:
+        - attributes:
+            value: '183.0'
+          type: User
+        type: Values
+      type: Float
+  userData: {}
