@@ -363,7 +363,7 @@ void update_flash_memory_values(void) {
         //--------------------------------------------------
         // Update runtime matrix
         //--------------------------------------------------
-        memcpy(readMatrix, writeMatrix, sizeof (readMatrix));
+        // memcpy(readMatrix, writeMatrix, sizeof (readMatrix));
 
         all_rows_received = true;
 
