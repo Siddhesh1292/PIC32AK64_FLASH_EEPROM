@@ -4,12 +4,12 @@
     "configurations": [
         {
             "name": "default",
-            "id": "conf1",
+            "id": "",
             "device": "PIC32AK6416GC41064",
             "imageType": "application",
             "imagePath": "./out/PIC32AK64_FLASH_EEPROM/default.elf",
             "toolProperties": "default-tool",
-            "tool": "PICkit Basic",
+            "tool": "Simulator",
             "packs": [
                 {
                     "name": "PIC32AK-GC_DFP",
@@ -142,7 +142,7 @@
                 "global.mstacktcm": false,
                 "global.omit-pack-options": "1",
                 "global.preserve-all": false,
-                "global.relaxed-math": false,
+                "global.relaxed-math": true,
                 "global.save-temps": false,
                 "global.wpo-lto": false
             }

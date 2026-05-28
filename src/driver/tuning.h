@@ -14,7 +14,6 @@ extern "C" {
 // MATRIX SIZE
 //--------------------------------------------------
 extern float CONFIG_POLES;  
-extern float CONFIG_POLES;
 extern float CONFIG_RPH;
 extern float CONFIG_LD;
 extern float CONFIG_LQ;

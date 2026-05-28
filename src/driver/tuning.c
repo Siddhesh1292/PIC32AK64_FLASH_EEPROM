@@ -14,11 +14,11 @@
     __builtin_memcpy((uint8_t *)(send_tuning_data + offset), &temp, 4);        \
   } while (0)
 
+
 float readMatrix[ROWS][COLS];
 float writeMatrix[ROWS][COLS];
 
-static uint8_t writeBuffer[EEPROM_DATA_SIZE];
-static uint8_t readBuffer[EEPROM_DATA_SIZE];
+static uint8_t eepromBuffer[EEPROM_DATA_SIZE];
 
 static uint16_t received_rows_mask = 0;
 static bool all_rows_received = false;
@@ -96,27 +96,6 @@ float CONFIG_DI = 0.2;
 float CONFIG_CANBAUD = 500.0;
 
 static int ESCid = 0;
-static float T_CONFIG_IPH_MAX, T_CONFIG_RPM_MAX;
-static int T_poles; // FF01
-static float T_CONFIG_RPH, T_Ld, T_CONFIG_LQ, T_CONFIG_PHIPH; // FF02
-static float T_CONFIG_ZERO_ANGLE, T_CONFIG_ZERO_ANGLE_measured; // FF04
-static int T_CONFIG_SENSOR_DIRECTION, T_CONFIG_SENSOR_DIRECTION_measured; // FF04
-
-static int T_CONFIG_ROTATION_DIRECTION; // FF06
-static float T_CONFIG_RPM_TO_KMPH, T_rpm_fault; // FF06
-static float T_CONFIG_MOTOR_DERATEC, T_motor_TfaultC, T_CONFIG_ESC_DERATEC,
-T_ESC_TfaultC; // FF07
-static float T_CONFIG_VBAT_MAX, T_CONFIG_IBAT_DEFAULT, T_OV_fault, T_UV_fault; // FF08
-static float T_CONFIG_IBAT_MAX, T_CONFIG_IBAT_REGEN, T_Iph_fault, T_Ibat_fault; // FF08
-
-static int T_CONFIG_DRIVING_MODE; // FF11
-static float T_CONFIG_L_RPM, T_CONFIG_M_RPM; // FF11
-static float T_CONFIG_THROTTLE_ZERO, T_CONFIG_THROTTLE_MAX; // FF12
-static float T_CONFIG_VBRAKE_DERATE, T_CONFIG_K_AUTO_BRAKE, T_CONFIG_REVERSE_RPM;
-static float T_CONFIG_KP_RPM, T_CONFIG_KI_RPM, T_CONFIG_L_ACCELERATION, T_CONFIG_M_ACCELERATION; // FF13
-static float T_CONFIG_L_IBAT, T_CONFIG_M_IBAT, T_CONFIG_L_IPH, T_CONFIG_M_IPH; // FF14
-static int T_CAN_baud;
-
 static int guipara_fault = 0;
 
 void tuning_init(void) {
@@ -129,16 +108,16 @@ void tuning_init(void) {
 void load_read_matrix(void) {
     uint32_t temp32;
 
-    memset(readBuffer, 0, EEPROM_DATA_SIZE);
+    memset(eepromBuffer, 0, EEPROM_DATA_SIZE);
 
-    if (FLASH_EEPROM_Read_Page(readBuffer, sizeof (readMatrix)) ==
+    if (FLASH_EEPROM_Read_Page(eepromBuffer, sizeof (readMatrix)) ==
             FLASH_EEPROM_OK) {
         //        BLUE_LED_Set();
         //--------------------------------------------------
         // Validate all float entries
         //--------------------------------------------------
         for (uint32_t i = 0; i < (ROWS * COLS); i++) {
-            __builtin_memcpy(&temp32, &readBuffer[i * 4], 4);
+            __builtin_memcpy(&temp32, &eepromBuffer[i * 4], 4);
 
             //--------------------------------------------------
             // Check erased flash
@@ -154,7 +133,7 @@ void load_read_matrix(void) {
         // Copy to matrix only after validation
         //--------------------------------------------------
         //        BLUE_LED_Set();
-        memcpy(readMatrix, readBuffer, sizeof (readMatrix));
+        memcpy(readMatrix, eepromBuffer, sizeof (readMatrix));
     } else {
         guipara_fault = 1;
     }
@@ -370,14 +349,14 @@ void update_flash_memory_values(void) {
     //--------------------------------------------------
     // Prepare EEPROM write buffer with the complete matrix.
     //--------------------------------------------------
-    memset(writeBuffer, 0xFF, EEPROM_DATA_SIZE);
+    memset(eepromBuffer, 0xFF, EEPROM_DATA_SIZE);
 
-    memcpy(writeBuffer, writeMatrix, sizeof (writeMatrix));
+    memcpy(eepromBuffer, writeMatrix, sizeof (writeMatrix));
 
     //--------------------------------------------------
     // Write complete matrix to EEPROM so this row survives reset.
     //--------------------------------------------------
-    if (FLASH_EEPROM_Write_Page(writeBuffer, sizeof (writeMatrix)) ==
+    if (FLASH_EEPROM_Write_Page(eepromBuffer, sizeof (writeMatrix)) ==
             FLASH_EEPROM_OK) {
 //        GREEN_LED_Set();
 
